@@ -53,7 +53,8 @@ app.post('/generate', async (req, res) => {
     await downloadFile(imageUrl, imagePath);
 
     console.log('Saving audio...');
-    const audioBuffer = Buffer.from(audioBase64, 'base64');
+    const cleanAudio = (audioBase64 || '').replace(/^data:audio\/\w+;base64,/, '').replace(/\s/g, '');
+    const audioBuffer = Buffer.from(cleanAudio, 'base64');
     fs.writeFileSync(audioPath, audioBuffer);
 
     const durationCmd = `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${audioPath}"`;
